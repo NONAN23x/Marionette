@@ -5,7 +5,7 @@ Identification of IP Address
 
 Use netdiscover to identify the target machine's IP address on your network:
 ```bash
-netdiscover -r 10.10.10.0/24
+sudo netdiscover -r 10.10.10.0/24
 ```
 
 Replace `10.10.10.0/24` with your network range (e.g., 192.168.0.1/24). This will scan the local network and display all active hosts with their IP addresses and MAC addresses.
@@ -73,8 +73,9 @@ Obtain credentials for the user `pinocchio` and use them to gain a shell on the 
 
 
 # Privilege Escalation
+// Todo: add more details
 
-Describe the steps to obtaining root/administrator privileges on the box.
+Replace the script with this
 
 ```python
 import socket,os,pty

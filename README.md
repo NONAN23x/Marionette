@@ -27,7 +27,7 @@ All attack paths are grounded in real-world scenarios rather than artificial CTF
 
 # ⬇️ Download
 
-👉 Download [Marionette](https://drive.nonan23x.dev/index.php/s/ZdDcSFrYkX3TFz2)
+👉 Download [Marionette](https://drive.nonan23x.dev/index.php/s/24LN6wgHmBPpdq5)
 
 # 📝 Writeup
 
