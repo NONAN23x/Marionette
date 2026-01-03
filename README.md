@@ -1,22 +1,21 @@
 # 🧵 Marionette VM
 
-[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)](releases)
+[![Version](https://img.shields.io/badge/Version-1.0-brightgreen.svg)](releases)
 [![Author](https://img.shields.io/badge/Author-nonan23x-blue.svg)](https://github.com/nonan23x)
-
-
 
 Marionette is a realistic, OSCP-Like, story-driven vulnerable Linux machine that simulates common security mistakes found in small development and operational environments.
 
-The lab focuses on:
+> ⚠️ This machine is intentionally vulnerable and is meant only for educational use.
+# Learning Objectives
 
-- Web application vulnerabilities
-- Poor credential handling
-- Misconfigured automation
-- Privilege escalation through unsafe scripting practices
+The lab focuses on:
+- Understanding Wordpress vulnerabilities
+- Exploiting Poor credential handling
+- Basic python programming
+- Abusing run as privilege mishandling
+- Exploiting Privilege escalation through unsafe scripting practices
 
 All attack paths are grounded in real-world scenarios rather than artificial CTF tricks.
-
-> ⚠️ This machine is intentionally vulnerable and is meant only for educational use.
 
 # 💻 Configuration
 
@@ -27,7 +26,7 @@ All attack paths are grounded in real-world scenarios rather than artificial CTF
 
 # ⬇️ Download
 
-👉 Download [Marionette](https://drive.nonan23x.dev/index.php/s/24LN6wgHmBPpdq5)
+[![Download Marionette](https://img.shields.io/badge/Download-Marionette-brightgreen.svg)](https://drive.nonan23x.dev/index.php/s/cHJxzQXCP6iBASQ)
 
 # 📝 Writeup
 
